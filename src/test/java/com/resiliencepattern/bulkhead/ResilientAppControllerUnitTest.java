@@ -49,11 +49,15 @@ public class ResilientAppControllerUnitTest {
                     ResponseEntity<String> response = restTemplate.getForEntity("/api/bulkhead", String.class);
                     int statusCode = response.getStatusCodeValue();
                     responseStatusCount.put(statusCode, responseStatusCount.getOrDefault(statusCode, 0) + 1);
+
+                    ResponseEntity<String> response1 = restTemplate.getForEntity("/api/bulkhead", String.class);
+                    int statusCode1 = response1.getStatusCodeValue();
+                    responseStatusCount.put(statusCode1, responseStatusCount.getOrDefault(statusCode1, 0) + 1);
                 });
 
         assertEquals(2, responseStatusCount.keySet().size());
         assertTrue(responseStatusCount.containsKey(BANDWIDTH_LIMIT_EXCEEDED.value()));
         assertTrue(responseStatusCount.containsKey(OK.value()));
-        wireMockServer.verify(3, getRequestedFor(urlEqualTo("/api/external")));
+        wireMockServer.verify(6, getRequestedFor(urlEqualTo("/api/external")));
     }
 }
